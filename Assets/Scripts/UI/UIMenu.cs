@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class UIMenu : MonoBehaviour
 {
-    [SerializeField] private ModeManager _modeManager;
-    
     [SerializeField] private GameObject _mainMenuParent;
     [SerializeField] private Button _start;
     [SerializeField] private Button _options;
@@ -16,6 +14,15 @@ public class UIMenu : MonoBehaviour
     [SerializeField] private GameObject _gameModeParent;
     [SerializeField] private Button _solo;
     [SerializeField] private Button _versus;
+    [SerializeField] private Button _ia;
+
+    [SerializeField] private TextMeshProUGUI _gameTitle;
+
+    [SerializeField] private float _hueSpeed = 0.1f;
+    
+    private float _hue;
+    private const float Saturation = 1f;
+    private const float Value = 1f;
 
     private void Start()
     {
@@ -31,11 +38,30 @@ public class UIMenu : MonoBehaviour
         
         _solo.GetComponentInChildren<TMP_Text>().text = "Solo";
         _versus.GetComponentInChildren<TMP_Text>().text = "Versus";
+        _ia.GetComponentInChildren<TMP_Text>().text = "Versus IA";
         
-        _solo.onClick.AddListener(() => LoadSceneWithGameMode(_modeManager.ModeSolo));
-        _versus.onClick.AddListener(() => LoadSceneWithGameMode(_modeManager.ModeVersus));
+        _solo.onClick.AddListener(() => LoadSceneWithGameMode(SelectedMode.SoloMode));
+        _versus.onClick.AddListener(() => LoadSceneWithGameMode(SelectedMode.VersusMode));
+        _ia.onClick.AddListener(() => LoadSceneWithGameMode(SelectedMode.IaMode));
     }
-    
+
+    private void Update()
+    {
+        ChangeColor();
+    }
+
+    private void ChangeColor()
+    {
+        _hue += _hueSpeed * Time.deltaTime;
+        
+        if (_hue >= 1)
+        {
+            _hue = 0;
+        }
+        
+        _gameTitle.color = Color.HSVToRGB(_hue, Saturation, Value);
+    }
+
     private void StartOnClicked()
     {
         _mainMenuParent.SetActive(false);
@@ -68,7 +94,7 @@ public class UIMenu : MonoBehaviour
     
     private void LoadSceneWithGameMode(GameMode gameMode)
     {
-        _modeManager.ModeMachine.ChangeMode(gameMode);
+        SelectedMode.SetGameMode(gameMode);
         SceneManager.LoadScene("GameScene");
     }
 

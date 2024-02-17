@@ -16,8 +16,6 @@ public class Bar : MonoBehaviour
     private float _minY;
     private float _maxY;
 
-    public float _increment = 0.1f;
-
     private void Start()
     {
         _minY = _frame.Rect.y;
@@ -40,23 +38,13 @@ public class Bar : MonoBehaviour
         var width = pos.x + _halfWidth;
         var height = pos.y + _halfHeight;
         Rect = new Rect(x, y, width, height);
-
-        // if (Input.GetKey(KeyCode.W))
-        // {
-        //     Move(_increment);
-        // }
-        //
-        // if (Input.GetKey(KeyCode.S))
-        // {
-        //     Move(-_increment);
-        // }
     }
 
-    public void Move(float increment)
+    public void Move(float velocity)
     {
         var transformPosition = transform.position;
 
-        transformPosition += new Vector3(0, increment * Time.deltaTime, 0);
+        transformPosition += new Vector3(0, velocity * Time.deltaTime, 0);
         _minY = _frame.Rect.y;
         _maxY = _frame.Rect.height;
         var min = _minY + _halfHeight;
@@ -65,5 +53,21 @@ public class Bar : MonoBehaviour
         transformPosition.x = DistanceFromCenter;
 
         transform.position = transformPosition;
+    }
+
+    public void IAMove(Vector2 target, float speed)
+    {
+        var position = transform.position;
+        
+        _minY = _frame.Rect.y;
+        _maxY = _frame.Rect.height;
+        var min = _minY + _halfHeight;
+        var max = _maxY - _halfHeight;
+        
+        position = Vector2.MoveTowards(position, target, speed * Time.deltaTime);
+        position.y = Math.Clamp(position.y, min, max);
+        position.x = DistanceFromCenter;
+
+        transform.position = position;
     }
 }

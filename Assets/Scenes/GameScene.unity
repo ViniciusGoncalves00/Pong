@@ -199,6 +199,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 246789241483950288, guid: f0b66a8195da7e74e90a8db74fcbf65e, type: 3}
+      propertyPath: _height
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7721359452598349857, guid: f0b66a8195da7e74e90a8db74fcbf65e, type: 3}
       propertyPath: _frame
       value: 
@@ -865,7 +869,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -951,7 +955,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1268842323}
-  - component: {fileID: 1268842322}
   - component: {fileID: 1268842321}
   m_Layer: 0
   m_Name: ModeManager
@@ -972,19 +975,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33c498b5cbc9daa468ee5fff37fdbdf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1268842322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1268842320}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 101e09924f16c594085bb425cdb6be66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Tag: DontDestroy
+  _ball: {fileID: 2144751226}
+  _playerOne: {fileID: 1841012987}
+  _playerTwo: {fileID: 493669048}
 --- !u!4 &1268842323
 Transform:
   m_ObjectHideFlags: 0
@@ -1321,7 +1314,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1605,12 +1598,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Pong: {fileID: 922060376}
   _frame: {fileID: 832325715}
-  LeftBar: {fileID: 1841012987}
-  RightBar: {fileID: 493669048}
-  MinVariationInX: 0
-  MaxVariationInX: 1
-  MinVariationInY: 0
-  MaxVariationInY: 1
+  _leftBar: {fileID: 1841012987}
+  _rightBar: {fileID: 493669048}
+  _minVariationInX: 0
+  _maxVariationInX: 1
+  _minVariationInY: 0
+  _maxVariationInY: 1
   _initialVelocity: 10
   _minVelocity: 10
   _maxVelocity: 50
@@ -1640,6 +1633,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 246789241483950288, guid: f0b66a8195da7e74e90a8db74fcbf65e, type: 3}
+      propertyPath: _height
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7721359452598349857, guid: f0b66a8195da7e74e90a8db74fcbf65e, type: 3}
       propertyPath: _frame
       value: 

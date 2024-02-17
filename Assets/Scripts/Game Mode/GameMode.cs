@@ -1,12 +1,15 @@
-using UnityEngine;
-
 public abstract class GameMode
 {
-    public Bar PlayerOne;
-    public Bar PlayerTwo;
-    
-    public GameMode(Bar playerOne, Bar playerTwo)
+    protected Bar PlayerOne;
+    protected Bar PlayerTwo;
+
+    protected Ball Ball;
+
+    protected const float Velocity = 20.0f;
+
+    public void SetParameters(Ball ball, Bar playerOne, Bar playerTwo)
     {
+        Ball = ball;
         PlayerOne = playerOne;
         PlayerTwo = playerTwo;
     }

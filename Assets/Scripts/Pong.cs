@@ -14,7 +14,6 @@ public class Pong : MonoBehaviour
     {
         if (PlayerOnePoints >= PointsToVictory || PlayerTwoPoints >= PointsToVictory)
         {
-            _modeManager.ModeMachine.ChangeMode(_modeManager.NoMode);
             SceneManager.LoadScene("MainMenuScene");
         }
     }

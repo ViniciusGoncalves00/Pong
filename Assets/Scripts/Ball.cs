@@ -6,28 +6,30 @@ public class Ball : MonoBehaviour
 {
     [SerializeField] private Pong Pong;
     [SerializeField] private Frame _frame;
-    [SerializeField] private Bar LeftBar;
-    [SerializeField] private Bar RightBar;
+    [SerializeField] private Bar _leftBar;
+    [SerializeField] private Bar _rightBar;
 
-    [SerializeField] private float MinVariationInX = 0.0f;
-    [SerializeField] private float MaxVariationInX = 1.0f;
-    [SerializeField] private float MinVariationInY = 0.0f;
-    [SerializeField] private float MaxVariationInY = 1.0f;
+    [SerializeField] private float _minVariationInX = 0.0f;
+    [SerializeField] private float _maxVariationInX = 1.0f;
+    [SerializeField] private float _minVariationInY = 0.0f;
+    [SerializeField] private float _maxVariationInY = 1.0f;
 
-    private Vector3 _direction = new Vector3();
     private Vector3 _variation = new Vector3();
+    public Vector3 Direction { get; private set; }
+    
     
     [SerializeField] private float _initialVelocity = 0.1f;
     [SerializeField] private float _minVelocity = 0.1f;
     [SerializeField] private float _maxVelocity = 0.1f;
     [SerializeField] private float _velocityGainRate = 0.1f;
     [SerializeField] private float _slowdown = 2;
-    
-    private float _extraLimitMultiplier = 1.01f;
+
+    private const float ExtraLimitMultiplier = 1.1f;
+    private const float NoLimitMultiplier = 1f;
 
     private float _velocity;
 
-    void Start()
+    private void Start()
     {
         SetDirection();
 
@@ -37,7 +39,7 @@ public class Ball : MonoBehaviour
         vector.Normalize();
     }
 
-    void Update()
+    private void Update()
     {
         Move();
 
@@ -57,17 +59,17 @@ public class Ball : MonoBehaviour
         var x = Random.Range(0.0f, 1.0f * direction);
         var y = Random.Range(-0.5f, 0.5f);
         var vectorDirection = new Vector2(x, y);
-        _direction = vectorDirection;
+        Direction = vectorDirection;
     }
 
     private void Move()
     {
-        transform.position = Vector2.MoveTowards(transform.position, transform.position + _direction, _velocity * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, transform.position + Direction, _velocity * Time.deltaTime);
     }
 
     private void VerifyCollision()
     {
-        if (OutsideOfTable())
+        if (!Inside(_frame.Rect, ExtraLimitMultiplier))
         {
             transform.position = new Vector3(0, 0, 0);
             return;
@@ -83,7 +85,7 @@ public class Ball : MonoBehaviour
             ChangeDirection(Vector2.up);
         }
         
-        else if (TouchBar(LeftBar))
+        else if (Inside(_leftBar.Rect, NoLimitMultiplier))
         {
             _velocity += _velocityGainRate;
             if (_velocity > _maxVelocity)
@@ -94,7 +96,7 @@ public class Ball : MonoBehaviour
             ChangeDirectionWithDeviation(Vector2.right);
         }
         
-        else if (TouchBar(RightBar))
+        else if (Inside(_rightBar.Rect, NoLimitMultiplier))
         {
             _velocity += _velocityGainRate;
             if (_velocity > _maxVelocity)
@@ -136,23 +138,23 @@ public class Ball : MonoBehaviour
 
     private void ChangeDirection(Vector2 normal)
     {
-        var direction = Vector2.Reflect(_direction, normal);
+        var direction = Vector2.Reflect(Direction, normal);
         direction.Normalize();
-        _direction = direction;
+        Direction = direction;
     }
 
     private void ChangeDirectionWithDeviation(Vector2 normal)
     {
         var variation = Variation(normal);
-        var direction = Vector2.Reflect(_direction, normal);
+        var direction = Vector2.Reflect(Direction, normal);
         direction += variation;
-        _direction = direction.normalized;
+        Direction = direction.normalized;
     }
 
     private Vector2 Variation(Vector2 normal)
     {
-        _variation.x = Random.Range(MinVariationInX * normal.x, MaxVariationInX * normal.x);
-        _variation.y = Random.Range(MinVariationInY, MaxVariationInY);
+        _variation.x = Random.Range(_minVariationInX * normal.x, _maxVariationInX * normal.x);
+        _variation.y = Random.Range(_minVariationInY, _maxVariationInY);
         return new Vector2(_variation.x, _variation.y);
     }
 
@@ -170,9 +172,19 @@ public class Ball : MonoBehaviour
     {
         var pos = transform.position;
         
-        return pos.x > _frame.Rect.width * _extraLimitMultiplier &&
-               pos.x < _frame.Rect.x * _extraLimitMultiplier &&
-               pos.y > _frame.Rect.height * _extraLimitMultiplier &&
-               pos.y < _frame.Rect.y * _extraLimitMultiplier;
+        return pos.x > _frame.Rect.width * ExtraLimitMultiplier &&
+               pos.x < _frame.Rect.x * ExtraLimitMultiplier &&
+               pos.y > _frame.Rect.height * ExtraLimitMultiplier &&
+               pos.y < _frame.Rect.y * ExtraLimitMultiplier;
+    }
+
+    private bool Inside(Rect rect, float extra)
+    {
+        var pos = transform.position;
+
+        return pos.x > rect.x * extra &&
+               pos.x < rect.width * extra &&
+               pos.y > rect.y * extra &&
+               pos.y < rect.height* extra;
     }
 }

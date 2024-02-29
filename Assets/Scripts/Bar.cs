@@ -42,13 +42,13 @@ public class Bar : MonoBehaviour
 
     public void Move(float velocity)
     {
-        var transformPosition = transform.position;
-
-        transformPosition += new Vector3(0, velocity * Time.deltaTime, 0);
         _minY = _frame.Rect.y;
         _maxY = _frame.Rect.height;
         var min = _minY + _halfHeight;
         var max = _maxY - _halfHeight;
+        
+        var transformPosition = transform.position;
+        transformPosition += new Vector3(0, velocity * Time.deltaTime, 0);
         transformPosition.y = Math.Clamp(transformPosition.y, min, max);
         transformPosition.x = DistanceFromCenter;
 
@@ -57,13 +57,12 @@ public class Bar : MonoBehaviour
 
     public void IAMove(Vector2 target, float speed)
     {
-        var position = transform.position;
-        
         _minY = _frame.Rect.y;
         _maxY = _frame.Rect.height;
         var min = _minY + _halfHeight;
         var max = _maxY - _halfHeight;
         
+        var position = transform.position;
         position = Vector2.MoveTowards(position, target, speed * Time.deltaTime);
         position.y = Math.Clamp(position.y, min, max);
         position.x = DistanceFromCenter;

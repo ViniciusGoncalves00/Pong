@@ -6,6 +6,9 @@ TagManager:
   tags:
   - DontDestroy
   - Frame
+  - Side
+  - Back
+  - Bar
   layers:
   - Default
   - TransparentFX

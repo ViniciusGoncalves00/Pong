@@ -11,7 +11,7 @@ public class DottedMesh : DrawMesh
     public DottedMesh(GameObject gameObject) : base(gameObject)
     {
     }
-
+    
     public void Draw(Vector2 center, Vector2 size, int amount, float spacing)
     {
         Dotted(center, size, amount, spacing);

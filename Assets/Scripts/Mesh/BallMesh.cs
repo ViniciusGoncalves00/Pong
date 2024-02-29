@@ -1,85 +1,110 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-public class BallMesh : MonoBehaviour
-{   
-    List<Vector3> circleVerteices = new List<Vector3>();
+public class BallMesh : DrawMesh
+{
+    List<Vector3> circleVertices = new List<Vector3>();
     List<Vector2> uvs = new List<Vector2>();
     List<int> triangles = new List<int>();
     
-    private Mesh _mesh;
-    private MeshFilter _meshFilter;
-    private MeshRenderer _meshRenderer;
-
-    [SerializeField] private float _radius = 1f;
-    [SerializeField] private Material _material;
-
-    [SerializeField] private Ball Ball;
+    private readonly float _radius;
+    private readonly int _angle;
     
-    void Start()
+    public Material Material;
+    
+    private readonly Color[] _colors =
     {
-        _meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        _meshRenderer.material = _material;
-        
-        _meshFilter = gameObject.AddComponent<MeshFilter>();
-        _mesh = new Mesh();
-        _meshFilter.mesh = _mesh;
-        
-        DrawCircle();
+        Color.red,
+        Color.magenta,
+        Color.blue,
+        Color.cyan,
+        Color.green,
+        Color.yellow
+    };
+    
+    private int _currentColorIndex;
+    private int _targetColorIndex = 1;
+    private float _targetPoint;
+    private const float _time = 1.0f;
+
+    public BallMesh(GameObject gameObject, float radius, int segments, Material material) : base(gameObject)
+    {
+        _radius = radius;
+        Material = material;
+        _angle = 360/segments;
     }
 
-    private void Update()
+    public void Draw()
     {
         DrawCircle();
-        _material.color += new Color(0.05f, 0.01f, 0.01f) * Time.deltaTime;
+        Transition();
     }
-    
-    void DrawCircle()
+
+    private void DrawCircle()
     {
-        circleVerteices.Clear();
+        circleVertices.Clear();
         uvs.Clear();
         triangles.Clear();
         
-        float val = 3.14285f / 180f;//one degree = val radians
-        int deltaAngle = 15;
+        var triangleCount = 0;
+        
+        var lastTriangle = 360 / _angle;
+    
+        var center = Vector3.zero;
+        
+        var firstPointX = _radius * Mathf.Sin(0f);
+        var firstPointY = _radius * Mathf.Cos(0f);
+    
+        var firstPoint = new Vector3(firstPointX, firstPointY, 0f);
+    
+        circleVertices.Add(center);
+        circleVertices.Add(firstPoint);
 
-        Vector3 center = Ball.transform.position;
-        transform.position = center;
-        circleVerteices.Add(center);
-        uvs.Add(new Vector2(0.5f, 0.5f));
-        int triangleCount = 0;
-
-        float x1 = _radius * Mathf.Cos(0);
-        float y1 = _radius * Mathf.Sin(0);
-        float z1 = 0;
-        Vector3 point1 = new Vector3(x1, y1, z1);
-        circleVerteices.Add(point1);
-        uvs.Add(new Vector2((x1 + _radius) / 2 * _radius, (y1 + _radius) / 2 * _radius));
-
-        for (int i = 0; i < 359; i = i + deltaAngle)
+        for (int i = 0; i < 360; i += _angle)
         {
-            float x2 = _radius * Mathf.Cos((i + deltaAngle) * val);
-            float y2 = _radius * Mathf.Sin((i + deltaAngle) * val);
-            float z2 = 0;
-            Vector3 point2 = new Vector3(x2, y2, z2);
+            var rad = (i + _angle) * Mathf.Deg2Rad;
             
-            circleVerteices.Add(point2);
-           
-            uvs.Add(new Vector2((x2 + _radius)/ 2 * _radius, (y2 +_radius)/ 2 * _radius));
-
-            triangles.Add(0);
-            triangles.Add(triangleCount  + 2);
-            triangles.Add(triangleCount  + 1);
-
+            var x = _radius * Mathf.Sin(rad);
+            var y = _radius * Mathf.Cos(rad);
+    
+            var currentPoint = new Vector3(x, y, 0f);
+            
+            if (triangleCount != lastTriangle)
+            {   
+                circleVertices.Add(currentPoint);
+                triangles.Add(0);
+                triangles.Add(triangleCount + 1);
+                triangles.Add(triangleCount + 2);
+            }
+            else
+            {
+                triangles.Add(0);
+                triangles.Add(triangleCount + 1);
+                triangles.Add(1);
+            }
+            
             triangleCount++;
-            point1 = point2;
         }
+    
+        Mesh.vertices = circleVertices.ToArray();
+        Mesh.triangles = triangles.ToArray();
+    }
+    
+    private void Transition()
+    {
+        _targetPoint += Time.deltaTime / _time;
+        Material.color = Color.Lerp(_colors[_currentColorIndex], _colors[_targetColorIndex], _targetPoint);
 
-        _mesh.vertices = circleVerteices.ToArray();
-        _mesh.triangles = triangles.ToArray();
-        _mesh.uv = uvs.ToArray();
+        if (_targetPoint >= 1)
+        {
+            _targetPoint = 0;
+            _currentColorIndex = _targetColorIndex;
+            _targetColorIndex++;
+
+            if (_targetColorIndex == _colors.Length)
+            {
+                _targetColorIndex = 0;
+            }
+        }
     }
 }
